@@ -80,6 +80,14 @@ body,
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
 }
 
 .dashboard-container {
@@ -155,15 +163,6 @@ body,
   @apply bg-primary-300;
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-}
-
 /* Amplify UI Overrides */
 [data-amplify-authenticator] {
   --amplify-components-button-primary-background-color: var(--primary);
@@ -204,7 +203,7 @@ body,
   width: 100%;
   height: 2.75rem;
   margin-top: 1rem;
-  background-color: hsl(var(--primary)) !important;
+  background-color: hsl(var(--primaryWx)) !important;
   color: hsl(var(--primary-foreground)) !important;
   @apply font-medium;
   @apply text-sm;
