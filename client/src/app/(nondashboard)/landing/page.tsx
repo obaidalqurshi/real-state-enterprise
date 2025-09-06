@@ -1,6 +1,7 @@
 import CallToActionSection from "./CallToActionSection"
 import DiscoverSection from "./DiscoverSection"
 import FeaturesSection from "./FeaturesSection"
+import FooterSection from "./FooterSection"
 import HeroSection from "./HeroSection"
 
 const page = () => {
@@ -10,6 +11,7 @@ const page = () => {
         <FeaturesSection />
         <DiscoverSection />
         <CallToActionSection />
+        <FooterSection />
     </div>
   )
 }
