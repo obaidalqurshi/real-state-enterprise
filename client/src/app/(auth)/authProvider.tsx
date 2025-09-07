@@ -1,7 +1,7 @@
 import React from 'react';
 import { Amplify } from 'aws-amplify';
 
-import { Authenticator, components, Heading, useAuthenticator, View } from '@aws-amplify/ui-react';
+import { Authenticator, Heading, Radio, RadioGroupField, useAuthenticator, View } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 
 
@@ -44,7 +44,41 @@ const components = {
                 </View>
             )
         }
-    }
+    },
+    SignUp:{
+        FormFields(){
+             const {validationErrors} = useAuthenticator();
+             return(
+                <>
+                <Authenticator.SignUp.FormFields />
+                <RadioGroupField
+                legend="Role"
+                name='custom:role'
+                errorMessage={validationErrors?.["custom:role"]}
+                hasError={!!validationErrors?.["custom:role"]}
+                isRequired
+                >
+                    <Radio value='tenant'>Tenant</Radio>
+                    <Radio value='manager'>Manager</Radio>
+                </RadioGroupField>
+                </>
+             )
+        },
+        Footer(){
+            const {toSignIn} = useAuthenticator();
+            return (
+                <View className='text-center mt-4'>
+                    <p className='text-muted-foreground'>
+                        Already have an account?{" "}
+                    
+                    <button onClick={toSignIn} className='text-primary hover:underline bg-transparent border-none p-0'>
+                        Sign in
+                    </button>
+                    </p>
+                </View>
+            )
+        }
+    },
 }
 
 const formFields = {
@@ -80,7 +114,7 @@ const formFields = {
             isRequired: true,
         },
         confirm_password:{
-            order: 2,
+            order: 4,
             placeholder: "Confirm your password",
             label: "Confirm Password",
             isRequired: true,
