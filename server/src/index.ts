@@ -4,6 +4,7 @@ import bodyParser from 'body-parser'
 import cors from 'cors'
 import helmet from 'helmet'
 import morgan from 'morgan'
+import { authMiddleware } from './middleware/authMiddleware.js'
 //  route import //
 
 // CONFIGURATIONS //
