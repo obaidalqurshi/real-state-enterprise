@@ -2,9 +2,37 @@ import AppSidebar from '@/components/AppSidebar'
 import Navbar from '@/components/Navbar'
 import { SidebarProvider } from '@/components/ui/sidebar'
 import { NAVBAR_HEIGHT } from '@/lib/constants'
-import React from 'react'
+import { useGetAuthUserQuery } from '@/state/api'
+import { tree } from 'next/dist/build/templates/app-page'
+import { usePathname, useRouter } from 'next/navigation'
+import React, { useEffect, useState } from 'react'
 
 const DashboardLayout = ({children}: {children : React.ReactNode}) => {
+  const {data: authUser, isLoading: authLoading} = useGetAuthUserQuery();
+  const router = useRouter();
+  const pathname = usePathname();
+  const [isLoading, setIsLoading] = useState(tree);
+
+  useEffect(()=>{
+    if(authUser){
+      const userRole = authUser.userRole?.toLowerCase();
+      if (
+        (userRole === "manager" && pathname.startsWith("/tenants"))||
+        (userRole === "tenant" && pathname.startsWith("/managers"))
+      ){
+        router.push(
+          userRole === "manager"
+          ? "/managers/properties"
+          : "/tenants/favorites"
+        , {scroll: false});
+      }else{
+        setIsLoading(false)
+      }
+    }
+  },[authUser, router, pathname])
+  if(authLoading || isLoading) return <>Loading...</> 
+  if (!authUser?.userRole) return null;
+
   return (
     <SidebarProvider>
     <div className='min-h-screen w-full bg-primary-100'>
