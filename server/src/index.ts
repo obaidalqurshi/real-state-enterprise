@@ -7,7 +7,8 @@ import morgan from 'morgan'
 import { authMiddleware } from './middleware/authMiddleware.js'
 //  route import //
 import tenantRoutes from "./routes/tenantRoutes.js"; 
-import managerRoutes from "./routes/managerRoutes.js"
+import managerRoutes from "./routes/managerRoutes.js";
+import propertyRoutes from './routes/propertyRoutes.js'
 // CONFIGURATIONS //
 dotenv.config();
 const app = express();
@@ -23,7 +24,7 @@ app.use(cors());
 app.get('/', (req, res)=>{
     res.send('This is home route');
 });
-
+app.use('/properties', propertyRoutes)
 app.use("/tenants", authMiddleware(["tenant"]), tenantRoutes)
 app.use("/managers", authMiddleware(["manager"]), managerRoutes)
 
