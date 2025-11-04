@@ -10,6 +10,7 @@ import tenantRoutes from "./routes/tenantRoutes.js";
 import managerRoutes from "./routes/managerRoutes.js";
 import propertyRoutes from './routes/propertyRoutes.js'
 import leaseRoutes from './routes/leaseRoutes.js'
+import applicationRoutes from './routes/applicationRotues.js'
 // CONFIGURATIONS //
 dotenv.config();
 const app = express();
@@ -25,6 +26,7 @@ app.use(cors());
 app.get('/', (req, res)=>{
     res.send('This is home route');
 });
+app.use('/applications', applicationRoutes)
 app.use('/properties', propertyRoutes)
 app.use('/leases', leaseRoutes)
 app.use("/tenants", authMiddleware(["tenant"]), tenantRoutes)
