@@ -97,7 +97,7 @@ model Property {
 
 model Manager {
   id          Int    @id @default(autoincrement())
-  cognitoId   String @unique
+  cognitoId   String @unique @db.Uuid
   name        String
   email       String
   phoneNumber String
@@ -107,7 +107,7 @@ model Manager {
 
 model Tenant {
   id          Int    @id @default(autoincrement())
-  cognitoId   String @unique
+  cognitoId   String @unique @db.Uuid
   name        String
   email       String
   phoneNumber String

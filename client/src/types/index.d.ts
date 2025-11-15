@@ -8,6 +8,8 @@ declare module "framer-motion" {
     className?: string;
   }
 }
+declare module "*.css";
+
 
 declare global {
   enum AmenityEnum {
