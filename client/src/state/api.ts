@@ -1,4 +1,4 @@
-import { cleanParams, createNewUserInDatabase } from "@/lib/utils";
+import { cleanParams, createNewUserInDatabase, withToast } from "@/lib/utils";
 import { Manager, Property, Tenant } from "@/types/prismaTypes";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { fetchAuthSession, getCurrentUser } from "aws-amplify/auth";
@@ -98,6 +98,18 @@ export const api = createApi({
 
 // tenant related endpoints
 
+getTenant: build.query<Tenant , string>({
+  query: (cognitoId) => `tenants/${cognitoId}`,
+      providesTags: (result) => [{ type: "Tenants", id: result?.id }],
+      async onQueryStarted(_, { queryFulfilled }) {
+        await withToast(queryFulfilled, {
+          error: "Failed to load tenant profile.",
+        });
+      },
+}),
+
+
+
 addFavoriteProperty: build.mutation<
   Tenant,
   {cognitoId: string; propertyId: number}>({
@@ -135,4 +147,4 @@ addFavoriteProperty: build.mutation<
   }),
 });
 
-export const {useGetAuthUserQuery,useUpdateTenantSettingsMutation, useUpdateManagerSettingsMutation, useGetPropertiesQuery, useAddFavoritePropertyMutation, useRemoveFavoritePropertyMutation } = api;
+export const {useGetAuthUserQuery,useUpdateTenantSettingsMutation, useUpdateManagerSettingsMutation, useGetPropertiesQuery, useAddFavoritePropertyMutation, useRemoveFavoritePropertyMutation, useGetTenantQuery } = api;
