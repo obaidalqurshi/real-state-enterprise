@@ -3,6 +3,7 @@ import { Manager, Property, Tenant } from "@/types/prismaTypes";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { fetchAuthSession, getCurrentUser } from "aws-amplify/auth";
 import { FiltersState } from ".";
+import { string } from "zod";
 
 
 export const api = createApi({
@@ -56,14 +57,7 @@ export const api = createApi({
         }
       }
     }),
-    updateTenantSettings: build.mutation<Tenant, {congitoId: string} & Partial<Tenant>>({
-      query: ({cognitoId, ...updatedTenant})=>({
-        url: `tenants/${cognitoId}`,
-        method: 'PUT',
-        body: updatedTenant
-      }),
-      invalidatesTags: (result)=> [{type: "Tenants", id: result?.id}],
-    }),
+    
     updateManagerSettings: build.mutation<Manager, {congitoId: string} & Partial<Manager>>({
       query: ({cognitoId, ...updatedManager})=>({
         url: `managers/${cognitoId}`,
@@ -100,8 +94,45 @@ export const api = createApi({
           {type: "Properties", id: "LIST"},
         ]
         : [ {type: "Properties", id: "LIST"}],
-  })
+  }),
+
+// tenant related endpoints
+
+addFavoriteProperty: build.mutation<
+  Tenant,
+  {cognitoId: string; propertyId: number}>({
+    query: ({cognitoId, propertyId}) =>({
+      url: `tenants/${cognitoId}/favorites/${propertyId}`,
+      method: "POST",
+    }),
+    invalidatesTags: (result) => [
+      { type: "Tenants", id: result?.id},
+      { type: "Properties", id: "LIST"},
+    ]
+  }),
+
+  removeFavoriteProperty: build.mutation<
+  Tenant,
+  { cognitoId: string; propertyId: number}>({
+    query: ({ cognitoId, propertyId}) => ({
+      url: `tenants/${cognitoId}/favorites/${propertyId}`,
+      method: "DELETE",
+    }),
+    invalidatesTags: (result) => [
+      { type: "Tenants", id: result?.id},
+      { type: "Properties", id: "LIST"},
+    ]
+  }),
+  updateTenantSettings: build.mutation<Tenant, {congitoId: string} & Partial<Tenant>>({
+    query: ({cognitoId, ...updatedTenant})=>({
+      url: `tenants/${cognitoId}`,
+      method: 'PUT',
+      body: updatedTenant
+    }),
+    invalidatesTags: (result)=> [{type: "Tenants", id: result?.id}],
+  }),
+
   }),
 });
 
-export const {useGetAuthUserQuery,useUpdateTenantSettingsMutation, useUpdateManagerSettingsMutation, useGetPropertiesQuery } = api;
+export const {useGetAuthUserQuery,useUpdateTenantSettingsMutation, useUpdateManagerSettingsMutation, useGetPropertiesQuery, useAddFavoritePropertyMutation, useRemoveFavoritePropertyMutation } = api;
