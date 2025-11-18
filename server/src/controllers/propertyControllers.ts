@@ -24,7 +24,7 @@ export const getProperties = async (req: Request, res: Response): Promise<void> 
             squareFeetMin,
             squareFeetMax,
             amenities,
-            avialableFrom,
+            availableFrom,
             latitude,
             longitude,
 
@@ -75,10 +75,10 @@ export const getProperties = async (req: Request, res: Response): Promise<void> 
                 Prisma.sql`p.amenities @> ${amenitiesArray}`
             )
         }
-        if(avialableFrom && avialableFrom !== "any"){
-            const avialableFromDate = typeof avialableFrom === "string" ? avialableFrom : null;
-            if(avialableFromDate){
-                const date = new Date(avialableFromDate);
+        if(availableFrom && availableFrom !== "any"){
+            const availableFromDate = typeof availableFrom === "string" ? availableFrom : null;
+            if(availableFromDate){
+                const date = new Date(availableFromDate);
                 if(!isNaN(date.getTime())){
                     whereConditions.push(
                         Prisma.sql`EXISTS (SELECT 1 FROM "Lease" l WHERE l."propertyType" = p.id AND l."startDate" <= ${date.toISOString()})`
@@ -133,41 +133,46 @@ export const getProperties = async (req: Request, res: Response): Promise<void> 
 }
 
 export const getProperty = async (
-    req:Request,
-    res: Response,
-): Promise<void> =>{
-    try{
-        const {id} = req.params;
-        const property = await prisma.property.findUnique({
-            where: {id: Number(id)},
-            include:{
-                location: true
+    req: Request,
+    res: Response
+  ): Promise<void> => {
+    try {
+      const { id } = req.params;
+      const property = await prisma.property.findUnique({
+        where: { id: Number(id) },
+        include: {
+          location: true,
+        },
+      });
+  
+      if (property) {
+        const coordinates: { coordinates: string }[] =
+          await prisma.$queryRaw`SELECT ST_asText(coordinates) as coordinates from "Location" where id = ${property.location.id}`;
+  
+        const geoJSON: any = wktToGeoJSON(coordinates[0]?.coordinates || "");
+        const longitude = geoJSON.coordinates[0];
+        const latitude = geoJSON.coordinates[1];
+  
+        const propertyWithCoordinates = {
+          ...property,
+          location: {
+            ...property.location,
+            coordinates: {
+              longitude,
+              latitude,
             },
-        });
-        if(property){
-            const coordinates: {coordinates: string} [] = await prisma.$queryRaw`SELECT ST_asText(coordinates) as coordinates from "Location" where id = ${property.location.id}`;
-            const geoJson: any = wktToGeoJSON(coordinates[0]?.coordinates || "");
-            const longitude = geoJson.coordinates[0];
-            const latitude = geoJson.coordinates[1];
-
-            const propertyWithCoordinates = {
-                ...property,
-                location:{
-                    ...property.location,
-                    coordinates:{
-                        longitude,
-                        latitude
-                    }
-                }
-            }
-            res.json(propertyWithCoordinates)
-        }
-    }catch(error: any){
-        res.status(500)
-        .json({message: `Error retrieving property: ${error.message}`})
+          },
+        };
+        res.json(propertyWithCoordinates);
+      }else {
+        res.status(404).json({ message: "Property not found" });}
+    } catch (err: any) {
+      res
+        .status(500)
+        .json({ message: `Error retrieving property: ${err.message}` });
     }
-}
-
+  };
+  
 export const createProperty = async (
     req:Request,
     res: Response,
