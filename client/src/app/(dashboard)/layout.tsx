@@ -37,16 +37,12 @@ const DashboardLayout = ({children}: {children : React.ReactNode}) => {
     <SidebarProvider>
     <div className="min-h-screen bg-primary-100">
       <Navbar />
-
-      {/* This wrapper only pushes content below the navbar */}
       <div style={{ paddingTop: NAVBAR_HEIGHT }}>
         <div className="flex">
-          {/* Sidebar stays fixed/inset – no changes needed */}
           <AppSidebar userType="tenant" />
 
-          {/* Content area – NO z-index, just left padding on large screens */}
-          <main className="flex-1 min-h-screen pl-0 lg:pl-72 transition-padding duration-300">
-            <div className="p-4 pt-6 lg:p-8">
+          <main className="flex-1 min-h-screen pl-0 lg:pl-72 transition-padding duration-300 ">
+            <div className="p-4 pt-6 lg:p-8 w-full">
               {children}
             </div>
           </main>
