@@ -10,8 +10,8 @@ const router = express.Router();
 
 
 router.get('/:cognitoId', getManager);
-router.put('/:congitoId', updateManager)
-router.get('/:congitoId/properties', getManagerProperties)
+router.put('/:cognitoId', updateManager)
+router.get('/:cognitoId/properties', getManagerProperties)
 router.post("/", createManager);
 
 
